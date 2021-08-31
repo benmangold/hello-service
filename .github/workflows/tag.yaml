@@ -1,0 +1,30 @@
+name: tag
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  tag-release:
+    runs-on: ubuntu-latest
+
+    env:
+      DOCKER_HUB_ACCOUNT: bmngld
+    
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set current tag as var
+        id: vars
+        run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
+
+      - run: make ci
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
+      - run: docker tag test $DOCKER_HUB_ACCOUNT/${{ github.event.repository.name }}:${{ steps.vars.outputs.tag }}
+
+      - run:  echo ${{ secrets.DOCKER_HUB_TOKEN }} | docker login --username $DOCKER_HUB_ACCOUNT --password-stdin
+
+      - run: docker push $DOCKER_HUB_ACCOUNT/${{ github.event.repository.name }}:${{ steps.vars.outputs.tag }}
