@@ -32,7 +32,7 @@ test-dive:
 	CI=true dive test
 
 test-snyk:
-	./snyk container test test --file=Dockerfile --severity-threshold=high
+	./snyk container test test --file=Dockerfile --severity-threshold=low
 
 test-docker-scan:
 	docker scan test

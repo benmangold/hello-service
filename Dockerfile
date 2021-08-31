@@ -1,9 +1,13 @@
-FROM ubuntu:20.04
+FROM node:16-alpine3.14
 
 ENV LANG en_US.utf8
 
-RUN apt update;
+RUN apk update; mkdir /app
 
-# RUN apt update; apt upgrade -y; apt autoremove;
+WORKDIR /app
 
-CMD ["sleep", "1000"]
+COPY . /app/
+
+RUN npm install
+
+CMD ["npm", "start"]
